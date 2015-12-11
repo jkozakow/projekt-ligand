@@ -84,47 +84,51 @@ Sekcje sprawdzającą korelacje między zmiennymi;
 Określenie ile przykładów ma każda z klas (res\_name);
 ======================================================
 
-| res\_name    |                                                                                                                 n|
-|:-------------|-----------------------------------------------------------------------------------------------------------------:|
-| SO4          |                                                                                                              1183|
-| GOL          |                                                                                                               778|
-| CA           |                                                                                                               661|
-| MG           |                                                                                                               402|
-| CL           |                                                                                                               400|
-| PO4          |                                                                                                               301|
-| HEM          |                                                                                                               296|
-| EDO          |                                                                                                               274|
-| NA           |                                                                                                               238|
-| ACT          |                                                                                                               167|
-| FAD          |                                                                                                               157|
-| ADP          |                                                                                                               138|
-| FE           |                                                                                                               120|
-| K            |                                                                                                               119|
-| ATP          |                                                                                                               106|
-| CU           |                                                                                                               104|
-| PEG          |                                                                                                                90|
-| CD           |                                                                                                                81|
-| MES          |                                                                                                                79|
-| EPE          |                                                                                                                72|
-| BME          |                                                                                                                67|
-| PG4          |                                                                                                                67|
-| TRS          |                                                                                                                63|
-| CO           |                                                                                                                61|
-| SEP          |                                                                                                                61|
-| PLP          |                                                                                                                59|
-| CIT          |                                                                                                                56|
-| GDP          |                                                                                                                55|
-| SAH          |                                                                                                                54|
-| FE2          |                                                                                                                52|
-| \<div id='ko |                                                                                                            d8'/\>|
-| \# Wykresy r |  ozkładów liczby atomów (local\_res\_atom\_non\_h\_count) i elektronów (local\_res\_atom\_non\_h\_electron\_sum);|
+| res\_name |     n|
+|:----------|-----:|
+| SO4       |  1183|
+| GOL       |   778|
+| CA        |   661|
+| MG        |   402|
+| CL        |   400|
+| PO4       |   301|
+| HEM       |   296|
+| EDO       |   274|
+| NA        |   238|
+| ACT       |   167|
+| FAD       |   157|
+| ADP       |   138|
+| FE        |   120|
+| K         |   119|
+| ATP       |   106|
+| CU        |   104|
+| PEG       |    90|
+| CD        |    81|
+| MES       |    79|
+| EPE       |    72|
+| BME       |    67|
+| PG4       |    67|
+| TRS       |    63|
+| CO        |    61|
+| SEP       |    61|
+| PLP       |    59|
+| CIT       |    56|
+| GDP       |    55|
+| SAH       |    54|
+| FE2       |    52|
+
+<div id='kod8'/>
+Wykresy rozkładów liczby atomów (local\_res\_atom\_non\_h\_count) i elektronów (local\_res\_atom\_non\_h\_electron\_sum);
+=========================================================================================================================
 
 ![](projekt2_files/figure-markdown_github/unnamed-chunk-8-1.png) ![](projekt2_files/figure-markdown_github/unnamed-chunk-8-2.png)
+
 <div id='kod9'/>
 Próba odtworzenia wykresu (oś X - liczba elektronów, oś y - liczba atomów):
 ===========================================================================
 
 ![](projekt2_files/figure-markdown_github/unnamed-chunk-9-1.png)
+
 <div id='kod10'/>
 Tabelę pokazującą 10 klas z największą niezgodnością liczby atomów (local\_res\_atom\_non\_h\_count vs dict\_atom\_non\_h\_count) i tabelę pokazującą 10 klas z największą niezgodnością liczby elektronów (local\_res\_atom\_non\_h\_electron\_sum vs dict\_atom\_non\_h\_electron\_sum;)
 ==========================================================================================================================================================================================================================================================================================
@@ -142,19 +146,20 @@ Tabelę pokazującą 10 klas z największą niezgodnością liczby atomów (loca
 | 031       | 3vfa      |                               42|                         42|             0|
 | 03P       | 3poz      |                               38|                         38|             0|
 
-| res\_name    | pdb\_code |  local\_res\_atom\_non\_h\_electron\_sum|  dict\_atom\_non\_h\_electron\_sum|  niezgodnosc2|
-|:-------------|:----------|----------------------------------------:|----------------------------------:|-------------:|
-| 006          | 3kdb      |                                      295|                                295|             0|
-| 010          | 4ii8      |                                       50|                                 50|             0|
-| 017          | 3d20      |                                      255|                                255|             0|
-| 017          | 3lzu      |                                      255|                                255|             0|
-| 017          | 3lzs      |                                      255|                                255|             0|
-| 01K          | 4bhw      |                                      469|                                469|             0|
-| 027          | 3pix      |                                      177|                                177|             0|
-| 02P          | 3qx5      |                                      187|                                187|             0|
-| 031          | 3vfa      |                                      281|                                281|             0|
-| 03P          | 3poz      |                                      259|                                259|             0|
-| \<div id='ko | d11'/\>   |                                         |                                   |              |
+| res\_name | pdb\_code |  local\_res\_atom\_non\_h\_electron\_sum|  dict\_atom\_non\_h\_electron\_sum|  niezgodnosc2|
+|:----------|:----------|----------------------------------------:|----------------------------------:|-------------:|
+| 006       | 3kdb      |                                      295|                                295|             0|
+| 010       | 4ii8      |                                       50|                                 50|             0|
+| 017       | 3d20      |                                      255|                                255|             0|
+| 017       | 3lzu      |                                      255|                                255|             0|
+| 017       | 3lzs      |                                      255|                                255|             0|
+| 01K       | 4bhw      |                                      469|                                469|             0|
+| 027       | 3pix      |                                      177|                                177|             0|
+| 02P       | 3qx5      |                                      187|                                187|             0|
+| 031       | 3vfa      |                                      281|                                281|             0|
+| 03P       | 3poz      |                                      259|                                259|             0|
+
+<div id='kod11'/>
 
 Sekcję pokazującą rozkład wartości wszystkich kolumn zaczynających się od part\_01 z zaznaczeniem (graficznym i liczbowym) średniej wartości;
 =============================================================================================================================================
