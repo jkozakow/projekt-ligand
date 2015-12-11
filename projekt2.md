@@ -142,20 +142,22 @@ Tabelę pokazującą 10 klas z największą niezgodnością liczby atomów (loca
 | 031       | 3vfa      |                               42|                         42|             0|
 | 03P       | 3poz      |                               38|                         38|             0|
 
-| res\_name    | pdb\_code   |  local\_res\_atom\_non\_h\_electron\_sum|  dict\_atom\_non\_h\_electron\_sum|                                           niezgodnosc2|
-|:-------------|:------------|----------------------------------------:|----------------------------------:|------------------------------------------------------:|
-| 006          | 3kdb        |                                      295|                                295|                                                      0|
-| 010          | 4ii8        |                                       50|                                 50|                                                      0|
-| 017          | 3d20        |                                      255|                                255|                                                      0|
-| 017          | 3lzu        |                                      255|                                255|                                                      0|
-| 017          | 3lzs        |                                      255|                                255|                                                      0|
-| 01K          | 4bhw        |                                      469|                                469|                                                      0|
-| 027          | 3pix        |                                      177|                                177|                                                      0|
-| 02P          | 3qx5        |                                      187|                                187|                                                      0|
-| 031          | 3vfa        |                                      281|                                281|                                                      0|
-| 03P          | 3poz        |                                      259|                                259|                                                      0|
-| \<div id='ko | d11'/\>     |                                         |                                   |                                                       |
-| \# Sekcję po | kazującą ro |     zkład wartości wszystkich kolumn zac|   zynających się od part\_01 z zaz|  naczeniem (graficznym i liczbowym) średniej wartości;|
+| res\_name    | pdb\_code |  local\_res\_atom\_non\_h\_electron\_sum|  dict\_atom\_non\_h\_electron\_sum|  niezgodnosc2|
+|:-------------|:----------|----------------------------------------:|----------------------------------:|-------------:|
+| 006          | 3kdb      |                                      295|                                295|             0|
+| 010          | 4ii8      |                                       50|                                 50|             0|
+| 017          | 3d20      |                                      255|                                255|             0|
+| 017          | 3lzu      |                                      255|                                255|             0|
+| 017          | 3lzs      |                                      255|                                255|             0|
+| 01K          | 4bhw      |                                      469|                                469|             0|
+| 027          | 3pix      |                                      177|                                177|             0|
+| 02P          | 3qx5      |                                      187|                                187|             0|
+| 031          | 3vfa      |                                      281|                                281|             0|
+| 03P          | 3poz      |                                      259|                                259|             0|
+| \<div id='ko | d11'/\>   |                                         |                                   |              |
+
+Sekcję pokazującą rozkład wartości wszystkich kolumn zaczynających się od part\_01 z zaznaczeniem (graficznym i liczbowym) średniej wartości;
+=============================================================================================================================================
 
 ![](projekt2_files/figure-markdown_github/unnamed-chunk-11-1.png)
 
