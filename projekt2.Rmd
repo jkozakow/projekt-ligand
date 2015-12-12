@@ -1,0 +1,210 @@
+---
+title: "Raport z analizy danych"
+output:
+  md_document:
+    variant: markdown_github
+Date:   December 11, 2015  
+---
+1. [Kod wyliczający wykorzystane biblioteki](#kod1)
+2. [Kod pozwalający wczytać dane z pliku](#kod2)
+3. [Kod usuwający z danych wiersze posiadające wartość zmiennej res_name równą: “DA”,“DC”,“DT”, “DU”, “DG”, “DI”,“UNK”, “UNX”, “UNL”, “PR”, “PD”, “Y1”, “EU”, “N”, “15P”, “UQ”, “PX4” lub “NAN”](#kod3)
+4. [Kod pozostawiający tylko unikatowe pary wartości (pdb_code, res_name) + dodatkowe zestawy danych do dalszych zadań](#kod4)
+5. [Krótkie podsumowanie wartości w każdej kolumnie](#kod5)
+6. [Sekcja sprawdzającą korelacje między zmiennymi](#kod6)
+7. [Określenie ile przykładów ma każda z klas (res_name)](#kod7)
+8. [Wykresy rozkładów liczby atomów (local_res_atom_non_h_count) i elektronów (local_res_atom_non_h_electron_sum)](#kod8)
+9. [Próba odtworzenia wykresu (oś X - liczba elektronów, oś y - liczba atomów)](#kod9)
+10. [Tabela pokazującą 10 klas z największą niezgodnością liczby atomów (local_res_atom_non_h_count vs dict_atom_non_h_count) i tabelę pokazującą 10 klas z największą niezgodnością liczby elektronów (local_res_atom_non_h_electron_sum vs dict_atom_non_h_electron_sum;)](#kod10)
+11. [Sekcja pokazującą rozkład wartości wszystkich kolumn zaczynających się od part_01 z zaznaczeniem (graficznym i liczbowym) średniej wartości;](#kod11)
+12. [Sekcja sprawdzającą czy na podstawie wartości innych kolumn można przewidzieć liczbę elektronów i atomów oraz z jaką dokładnością można dokonać takiej predykcji; trafność regresji powinna zostać oszacowana na podstawie miar R^2 i RMSE;](#kod12)
+13. [Sekcja próbującą stworzyć klasyfikator przewidujący wartość atrybutu res_name (w tej sekcji należy wykorzystać wiedzę z pozostałych punktów oraz wykonać dodatkowe czynności, które mogą poprawić trafność klasyfikacji); trafność klasyfikacji powinna zostać oszacowana na danych inne niż uczące za pomocą mechanizmu (stratyfikowanej!) oceny krzyżowej lub (stratyfikowanego!) zbioru testowego.](#kod13)
+
+# Podsumowanie
+Nie udało mi się wykonać wszystkich zadań, szczególnie stworzyc klasyfikatora, dlatego zamieściłem jedynie koncepcję. W korelacji wykorzystałem dane bez prefixu partXX. Wykres odwtworzony niestety nie jest dokładnie kopią tego z zadania, ale myślę, że wystarczająco oddaje wizualizację danych. W regresji skorzystałem z summary.lm() w celu wyciągnięcia miar R^2 oraz RMSE. 
+
+<div id='kod1'/>
+# Kod wyliczający wykorzystane biblioteki;
+```{r, cache = TRUE, echo=TRUE, message=FALSE, warning=FALSE}
+library(knitr)
+library(dplyr)
+library(ggplot2)
+library(ggExtra)
+library(gridExtra)
+library(lattice)
+library(corrplot)
+library(caret)
+```
+
+<div id='kod2'/>
+# Kod pozwalający wczytać dane z pliku;
+```{r, cache = TRUE, echo=TRUE, message=FALSE, warning=FALSE}
+
+data <- read.csv("all_summary.txt", sep =";", header = TRUE)
+
+```
+
+<div id='kod3'/>
+# Kod usuwający z danych wiersze posiadające wartość zmiennej res_name równą: “DA”,“DC”,“DT”, “DU”, “DG”, “DI”,“UNK”, “UNX”, “UNL”, “PR”, “PD”, “Y1”, “EU”, “N”, “15P”, “UQ”, “PX4” lub “NAN”;
+```{r, cache = TRUE, echo=TRUE, message=FALSE, warning=FALSE}
+data <- data %>%
+  group_by(res_name) %>%
+  filter( !grepl("DA|DI|DC|DT|DU|DG|UNK|UNX|UNL|PR|PD|Y1|EU|N|15P|UQ|PX4|NAN",res_name))
+
+```
+
+<div id='kod4'/>
+# Kod pozostawiający tylko unikatowe pary wartości (pdb_code, res_name) + dodatkowe zestawy danych do dalszych zadań
+
+```{r, cache = TRUE, echo=TRUE, message=FALSE, warning=FALSE}
+data <- data[!duplicated(data[c("pdb_code", "res_name")]),]
+nopart_data <- select (data, -starts_with("part"))
+part1_data <- select (data, starts_with("part_01"))
+part1_data[is.na(part1_data)] <- 0
+
+```
+
+<div id='kod5'/>
+# Krótkie podsumowanie wartości w każdej kolumnie;
+
+```{r, cache = TRUE, echo=FALSE, message=FALSE, warning=FALSE}
+kable(head(summary(data)))
+
+```
+
+<div id='kod6'/>
+# Sekcje sprawdzającą korelacje między zmiennymi;
+```{r, cache = TRUE, echo=FALSE, message=FALSE, warning=FALSE}
+cor_data <- select(nopart_data, -(local_BAa:local_ZD_plus_a), -(dict_atom_non_h_count:dict_atom_S_count),
+                    -(grid_space:resolution_max_limit), -(TwoFoFc_bulk_mean:TwoFoFc_bulk_std), 
+                    -(Fo_bulk_mean:Fo_bulk_std), -(FoFc_bulk_mean:FoFc_bulk_std),       -(Fc_bulk_mean:Fc_bulk_std),
+                    -(TwoFoFc_void_fit_binormal_mean1:TwoFoFc_solvent_fit_normal_std))
+cor_matrix <- cor(cor_data[,unlist(lapply(cor_data, is.numeric))])
+cor_matrix[is.na(cor_matrix)] <- 0
+par(ps=4)
+corrplot(cor_matrix,method="circle")
+
+```
+
+<div id='kod7'/>
+# Określenie ile przykładów ma każda z klas (res_name);
+
+```{r, cache = TRUE, echo=FALSE, message=FALSE, warning=FALSE}
+count_class <- data %>% 
+    group_by(res_name) %>%
+    count(res_name)
+kable(head(arrange(count_class, desc(n)),30))
+```
+
+<div id='kod8'/>
+# Wykresy rozkładów liczby atomów (local_res_atom_non_h_count) i elektronów (local_res_atom_non_h_electron_sum);
+
+```{r, cache = TRUE, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(data, aes(x=local_res_atom_non_h_count))+geom_density()
+ggplot(data, aes(x=local_res_atom_non_h_electron_sum))+geom_density()
+```
+
+<div id='kod9'/>
+# Próba odtworzenia wykresu (oś X - liczba elektronów, oś y - liczba atomów): 
+
+```{r, cache = TRUE, echo=FALSE, message=FALSE, warning=FALSE}
+xvar <- data$local_res_atom_non_h_electron_sum
+yvar <- data$local_res_atom_non_h_count
+df <- data.frame(xvar, yvar)
+scatter <- ggplot(df,aes(x=xvar,y=yvar))+
+  stat_density2d(aes(fill=..density..), contour = FALSE, geom="tile") +
+  scale_x_continuous(limit=c(0,650))+
+  scale_y_continuous(limit=c(0,100))+
+  scale_fill_gradientn(colours = c('#af8dc3','#ffffbf','#ef8a62')) +
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.title.x=element_blank(),
+        axis.title.y=element_blank())
+ggMarginal(scatter, type = "histogram",  size = 5, fill = "#FF0000", col = "#000000", binwidth=5,
+           xparams = list(binwidth = 5),
+           yparams = list(binwidth = 1))
+
+```
+
+<div id='kod10'/>
+# Tabelę pokazującą 10 klas z największą niezgodnością liczby atomów (local_res_atom_non_h_count vs dict_atom_non_h_count) i tabelę pokazującą 10 klas z największą niezgodnością liczby elektronów (local_res_atom_non_h_electron_sum vs dict_atom_non_h_electron_sum;)
+
+```{r, cache = TRUE, echo=FALSE, message=FALSE, warning=FALSE}
+dat_data <- data
+data_niezgodnosci <- mutate(dat_data, niezgodnosc1=abs(local_res_atom_non_h_count-dict_atom_non_h_count), niezgodnosc2=abs(local_res_atom_non_h_electron_sum-dict_atom_non_h_electron_sum))
+data_niezgodnosci1_sel <- select(data_niezgodnosci, res_name, pdb_code, local_res_atom_non_h_count, dict_atom_non_h_count, niezgodnosc1)
+data_niezgodnosci2_sel <- select(data_niezgodnosci, res_name, pdb_code, local_res_atom_non_h_electron_sum, dict_atom_non_h_electron_sum, niezgodnosc2)
+kable(head(arrange(data_niezgodnosci1_sel, desc(niezgodnosc1)), 10))
+kable(head(arrange(data_niezgodnosci2_sel, desc(niezgodnosc2)), 10))
+``` 
+
+<div id='kod11'/>
+
+# Sekcję pokazującą rozkład wartości wszystkich kolumn zaczynających się od part_01 z zaznaczeniem (graficznym i liczbowym) średniej wartości;
+
+```{r, cache = TRUE, echo=FALSE, message=FALSE, warning=FALSE}
+
+nm <- names(part1_data)
+p <- list()
+srednie <- sapply(part1_data, mean)
+
+
+for (i in seq_along(nm)) {
+  print(ggplot(part1_data, aes_string(x = nm[i])) + 
+          geom_histogram() + geom_vline(aes_string(xintercept=srednie[i]))) 
+  print(srednie[i])
+  }
+``` 
+
+<div id='kod12'/>
+# Sekcję sprawdzającą czy na podstawie wartości innych kolumn można przewidzieć liczbę elektronów i atomów oraz z jaką dokładnością można dokonać takiej predykcji; trafność regresji powinna zostać oszacowana na podstawie miar R^2 i RMSE;
+
+```{r, cache = TRUE, echo=FALSE, message=FALSE, warning=FALSE}
+set.seed(23)
+lm_data <- data
+lm_data[is.na(lm_data)] <- 0
+lm_data <- lm_data[sapply(lm_data, is.numeric)]
+lm_data <- lm_data
+
+lm1_model <- lm(local_res_atom_non_h_count ~ ., lm_data)
+lm1_summary <- summary(lm1_model)
+paste("local_res_atom_non_h_count R^2", lm1_summary$r.squared)
+paste("local_res_atom_non_h_count RMSE", lm1_summary$sigma)
+
+lm2_model <- lm(local_res_atom_non_h_electron_sum ~ ., lm_data)
+lm2_summary <- summary(lm2_model)
+paste("local_res_atom_non_h_electron_sum R^2", lm2_summary$r.squared)
+paste("local_res_atom_non_h_count RMSE", lm2_summary$sigma)
+
+``` 
+
+<div id='kod13'/>
+# Sekcję próbującą stworzyć klasyfikator przewidujący wartość atrybutu res_name (w tej sekcji należy wykorzystać wiedzę z pozostałych punktów oraz wykonać dodatkowe czynności, które mogą poprawić trafność klasyfikacji); trafność klasyfikacji powinna zostać oszacowana na danych inne niż uczące za pomocą mechanizmu (stratyfikowanej!) oceny krzyżowej lub (stratyfikowanego!) zbioru testowego.
+## Koncepcja
+ml_data <- read.csv("all_summary.txt", sep =";", header = TRUE)
+
+ml_data <- data %>%
+  select(res_name, local_res_atom_non_h_count, local_res_atom_non_h_electron_sum)
+  
+
+
+set.seed(23)
+
+training <- ml_data[ inTraining,]
+testing  <- ml_data[-inTraining,]
+ctrl <- trainControl(
+  # powtórzona ocena krzyżowa
+  method = "repeatedcv",
+  # liczba podziałów
+  number = 2,
+  # liczba powtórzeń
+  repeats = 2)
+
+fit <- train(res_name ~ .,
+             data = ml_data,
+             method = "rf",
+             trControl = ctrl,
+             # Paramter dla algorytmu uczącego
+             ntree = 10)
+rfClasses <- predict(fit, newdata = testing)
+confusionMatrix(data = rfClasses, testing$res_name)
